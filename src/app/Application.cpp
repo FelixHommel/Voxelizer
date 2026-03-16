@@ -139,6 +139,7 @@ void Application::run()
     glEnableVertexAttribArray(0);
     // NOLINTNEXTLINE(readability-magic-numbers): 3 and 5 in this context are not magic numbers
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     auto shader{ std::make_unique<Shader>(
         readFile(VOX_ROOT "resources/shaders/camera.vert").c_str(),
