@@ -184,6 +184,7 @@ void Application::run()
         shader->setMatrix4("model", glm::mat4(1.f));
 
         glBindVertexArray(vao);
+        // NOLINTNEXTLINE(readability-magic-numbers): 36 is the amount of vertices that are drawn
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         glfwSwapBuffers(m_window.get());
