@@ -7,10 +7,7 @@ namespace vox
 {
 
 Camera::Camera(const glm::vec3& position, const glm::vec3& up, float yaw, float pitch)
-    : m_position{ position }
-    , m_worldUp{ up }
-    , m_yaw{ yaw }
-    , m_pitch{ pitch }
+    : m_position{ position }, m_worldUp{ up }, m_yaw{ yaw }, m_pitch{ pitch }
 {
     updateCameraVectors();
 }
@@ -66,11 +63,9 @@ void Camera::porocessMouseScroll(float offsetY)
 
 void Camera::updateCameraVectors()
 {
-    glm::vec3 front{
-        std::cos(glm::radians(m_yaw)) * std::cos(glm::radians(m_pitch)),
-        std::sin(glm::radians(m_pitch)),
-        std::sin(glm::radians(m_yaw)) * std::cos(glm::radians(m_pitch))
-    };
+    glm::vec3 front{ std::cos(glm::radians(m_yaw)) * std::cos(glm::radians(m_pitch)),
+                     std::sin(glm::radians(m_pitch)),
+                     std::sin(glm::radians(m_yaw)) * std::cos(glm::radians(m_pitch)) };
 
     m_front = glm::normalize(front);
     m_right = glm::normalize(glm::cross(m_front, m_worldUp));

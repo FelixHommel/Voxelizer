@@ -42,7 +42,12 @@ public:
         DOWN
     };
 
-    Camera(const glm::vec3& position = ::DEFAULT_POSITION, const glm::vec3& up = ::DEFAULT_UP, float yaw = ::DEFAULT_YAW, float pitch = ::DEFAULT_PITCH);
+    Camera(
+        const glm::vec3& position = ::DEFAULT_POSITION,
+        const glm::vec3& up = ::DEFAULT_UP,
+        float yaw = ::DEFAULT_YAW,
+        float pitch = ::DEFAULT_PITCH
+    );
 
     [[nodiscard]] float zoom() const noexcept { return m_zoom; }
     [[nodiscard]] glm::mat4 viewMatrix() const { return glm::lookAt(m_position, m_position + m_front, m_up); }

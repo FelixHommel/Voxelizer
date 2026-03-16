@@ -71,15 +71,13 @@ Application::Application()
     glfwSetWindowUserPointer(m_window.get(), this);
     glfwSetInputMode(m_window.get(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    glfwSetFramebufferSizeCallback(m_window.get(), 
-        [](GLFWwindow* window, int width, int height) {
-            auto* self{ static_cast<Application*>(glfwGetWindowUserPointer(window)) };
+    glfwSetFramebufferSizeCallback(m_window.get(), [](GLFWwindow* window, int width, int height) {
+        auto* self{ static_cast<Application*>(glfwGetWindowUserPointer(window)) };
 
-            glViewport(0, 0, width, height); 
-            self->m_windowWidth = static_cast<std::uint16_t>(width);
-            self->m_windowHeight = static_cast<std::uint16_t>(height);
-        }
-    );
+        glViewport(0, 0, width, height);
+        self->m_windowWidth = static_cast<std::uint16_t>(width);
+        self->m_windowHeight = static_cast<std::uint16_t>(height);
+    });
     glfwSetCursorPosCallback(m_window.get(), [](GLFWwindow* window, double posXIn, double posYIn) {
         auto* self{ static_cast<Application*>(glfwGetWindowUserPointer(window)) };
 
@@ -142,22 +140,15 @@ void Application::run()
     // NOLINTNEXTLINE(readability-magic-numbers): 3 and 5 in this context are not magic numbers
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
 
-    auto shader{
-        std::make_unique<Shader>(
-            readFile(VOX_ROOT "resources/shaders/camera.vert").c_str(),
-            readFile(VOX_ROOT "resources/shaders/camera.frag").c_str()
-        )
-    };
+    auto shader{ std::make_unique<Shader>(
+        readFile(VOX_ROOT "resources/shaders/camera.vert").c_str(),
+        readFile(VOX_ROOT "resources/shaders/camera.frag").c_str()
+    ) };
 
     stbi_set_flip_vertically_on_load(1);
     const auto textureInfo{ loadTexture(VOX_ROOT "resources/textures/container.jpg") };
     auto texture{
-        std::make_unique<Texture2D>(
-            textureInfo.width,
-            textureInfo.height,
-            textureInfo.nrChannels,
-            textureInfo.pixels
-        )
+        std::make_unique<Texture2D>(textureInfo.width, textureInfo.height, textureInfo.nrChannels, textureInfo.pixels)
     };
 
     shader->use();
@@ -181,7 +172,12 @@ void Application::run()
 
         shader->use();
 
-        auto projection{ glm::perspective(glm::radians(m_camera.zoom()), static_cast<float>(m_windowWidth) / static_cast<float>(m_windowHeight), ::NEAR_PLANE, ::FAR_PLANE) };
+        auto projection{ glm::perspective(
+            glm::radians(m_camera.zoom()),
+            static_cast<float>(m_windowWidth) / static_cast<float>(m_windowHeight),
+            ::NEAR_PLANE,
+            ::FAR_PLANE
+        ) };
 
         shader->setMatrix4("projection", projection);
         shader->setMatrix4("view", m_camera.viewMatrix());
@@ -203,14 +199,14 @@ void Application::processInput(GLFWwindow* window, float deltaTime)
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, GLFW_TRUE);
 
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+    if(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         m_camera.processKeyboard(Camera::CameraMovement::FORWARD, deltaTime);
-    else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+    else if(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
         m_camera.processKeyboard(Camera::CameraMovement::BACKWARD, deltaTime);
 
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+    if(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
         m_camera.processKeyboard(Camera::CameraMovement::LEFT, deltaTime);
-    else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+    else if(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
         m_camera.processKeyboard(Camera::CameraMovement::RIGHT, deltaTime);
 
     if(glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
@@ -253,12 +249,14 @@ constexpr ::TextureInfo Application::loadTexture(const std::filesystem::path& fi
     };
 
     if(imageData == nullptr)
-            throw std::runtime_error(fmt::format("stb_image failed: {}", stbi_failure_reason()));
+        throw std::runtime_error(fmt::format("stb_image failed: {}", stbi_failure_reason()));
 
     if(width <= 0 || height <= 0 || nrChannels <= 0)
     {
         stbi_image_free(imageData);
-        throw std::runtime_error(fmt::format("Invalid image dimensions (width: {}, height: {}, channels: {})", width, height, nrChannels));
+        throw std::runtime_error(
+            fmt::format("Invalid image dimensions (width: {}, height: {}, channels: {})", width, height, nrChannels)
+        );
     }
 
     const auto w{ static_cast<std::size_t>(width) };
@@ -268,7 +266,9 @@ constexpr ::TextureInfo Application::loadTexture(const std::filesystem::path& fi
     if(w > std::numeric_limits<std::size_t>::max() / h || w * h > std::numeric_limits<std::size_t>::max() / c)
     {
         stbi_image_free(imageData);
-        throw std::runtime_error(fmt::format("Image size overflow (width: {}, height: {}, channels: {})", width, height, nrChannels));
+        throw std::runtime_error(
+            fmt::format("Image size overflow (width: {}, height: {}, channels: {})", width, height, nrChannels)
+        );
     }
 
     const auto size{ w * h * c };
