@@ -1,0 +1,3 @@
+leak:libglfw.so
+leak:_glfwInitGLX
+leak:libGLX_mesa.so
