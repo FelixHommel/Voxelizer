@@ -47,15 +47,6 @@ constexpr std::array<float, 180> CUBE_VERTICES{
 constexpr auto NEAR_PLANE{ 0.1f };
 constexpr auto FAR_PLANE{ 100.f };
 
-struct GLFWwindowDeleter
-{
-    void operator()(GLFWwindow* window)
-    {
-        if(window != nullptr)
-            glfwDestroyWindow(window);
-    }
-};
-
 struct TextureInfo
 {
     int width;
@@ -87,8 +78,17 @@ public:
     void run();
 
 private:
-    std::unique_ptr<GLFWwindow, ::GLFWwindowDeleter> m_window{
-        std::unique_ptr<GLFWwindow, ::GLFWwindowDeleter>(nullptr, {})
+    struct GLFWwindowDeleter
+    {
+        void operator()(GLFWwindow* window)
+        {
+            if(window != nullptr)
+                glfwDestroyWindow(window);
+        }
+    };
+
+    std::unique_ptr<GLFWwindow, GLFWwindowDeleter> m_window{
+        std::unique_ptr<GLFWwindow, GLFWwindowDeleter>(nullptr, {})
     };
     std::uint16_t m_windowWidth;
     std::uint16_t m_windowHeight;
