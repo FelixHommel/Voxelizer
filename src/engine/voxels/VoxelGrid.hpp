@@ -31,7 +31,7 @@ public:
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
         glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-        glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, GRID_DIM, GRID_DIM, GRID_DIM, 0, GL_RGBA8, GL_UNSIGNED_BYTE, m_voxelGrid.data());
+        glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, GRID_DIM, GRID_DIM, GRID_DIM, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_voxelGrid.data());
 
         glBindTexture(GL_TEXTURE_3D, 0);
     }
