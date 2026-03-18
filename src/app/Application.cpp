@@ -1,7 +1,7 @@
 #include "Application.hpp"
 
 #include "core/Shader.hpp"
-#include "core/Texture.hpp"
+#include "voxels/VoxelGrid.hpp"
 
 #include <fmt/format.h>
 #include <glad/gl.h>
@@ -124,36 +124,15 @@ Application::~Application()
 
 void Application::run()
 {
-    unsigned int vbo{};
-    unsigned int vao{};
-
-    glGenVertexArrays(1, &vao);
-    glGenBuffers(1, &vbo);
-    glBindVertexArray(vao);
-
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(::CUBE_VERTICES), ::CUBE_VERTICES.data(), GL_STATIC_DRAW);
-
-    // NOLINTNEXTLINE(readability-magic-numbers): 3 and 5 in this context are not magic numbers
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(0));
-    glEnableVertexAttribArray(0);
-    // NOLINTNEXTLINE(readability-magic-numbers): 3 and 5 in this context are not magic numbers
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), reinterpret_cast<void*>(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-
     auto shader{ std::make_unique<Shader>(
-        readFile(VOX_ROOT "resources/shaders/camera.vert").c_str(),
-        readFile(VOX_ROOT "resources/shaders/camera.frag").c_str()
+        readFile(VOX_ROOT "resources/shaders/voxelDDA_simple.vert").c_str(),
+        readFile(VOX_ROOT "resources/shaders/voxelDDA_simple.frag").c_str()
     ) };
 
-    stbi_set_flip_vertically_on_load(1);
-    const auto textureInfo{ loadTexture(VOX_ROOT "resources/textures/container.jpg") };
-    auto texture{
-        std::make_unique<Texture2D>(textureInfo.width, textureInfo.height, textureInfo.nrChannels, textureInfo.pixels)
-    };
-
     shader->use();
-    shader->setInteger("texture1", 0);
+    shader->setInteger("voxelGrid", 0);
+
+    VoxelGrid grid{};
 
     float deltaTime{ 0.f };
     float lastTime{ 0.f };
@@ -165,13 +144,11 @@ void Application::run()
 
         processInput(m_window.get(), deltaTime);
 
-        glClearColor(CLEAR_COLOR, CLEAR_COLOR, CLEAR_COLOR, 1.f);
+        glClearColor(0.f, CLEAR_COLOR, 0.f, 1.f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glActiveTexture(GL_TEXTURE0);
-        texture->bind();
-
         shader->use();
+        grid.bind(0);
 
         auto projection{ glm::perspective(
             glm::radians(m_camera.zoom()),
@@ -179,21 +156,18 @@ void Application::run()
             ::NEAR_PLANE,
             ::FAR_PLANE
         ) };
+        auto invViewProj{ glm::inverse(projection * m_camera.viewMatrix()) };
 
-        shader->setMatrix4("projection", projection);
-        shader->setMatrix4("view", m_camera.viewMatrix());
-        shader->setMatrix4("model", glm::mat4(1.f));
+        shader->setMatrix4("invViewProj", invViewProj);
+        shader->setVector3f("cameraPos", m_camera.position());
+        shader->setVector2f("resolution", static_cast<float>(m_windowWidth), static_cast<float>(m_windowHeight));
 
-        glBindVertexArray(vao);
-        // NOLINTNEXTLINE(readability-magic-numbers): 36 is the amount of vertices that are drawn
-        glDrawArrays(GL_TRIANGLES, 0, 36);
+        // NOLINTNEXTLINE(readability-magic-numbers): 3 vertices for one simple triangle
+        glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glfwSwapBuffers(m_window.get());
         glfwPollEvents();
     }
-
-    glDeleteVertexArrays(1, &vao);
-    glDeleteBuffers(1, &vbo);
 }
 
 void Application::processInput(GLFWwindow* window, float deltaTime)

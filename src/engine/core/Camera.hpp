@@ -49,6 +49,7 @@ public:
         float pitch = ::DEFAULT_PITCH
     );
 
+    [[nodiscard]] glm::vec3 position() const noexcept { return m_position; }
     [[nodiscard]] float zoom() const noexcept { return m_zoom; }
     [[nodiscard]] glm::mat4 viewMatrix() const { return glm::lookAt(m_position, m_position + m_front, m_up); }
 

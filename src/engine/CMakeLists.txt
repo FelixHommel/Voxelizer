@@ -6,6 +6,7 @@ add_library(${NAME}
     ./core/Shader.cpp
     ./core/Texture.cpp
     ./external/stb_image_impl.cpp
+    ./voxels/VoxelGrid.cpp
 )
 
 target_sources(${NAME}
@@ -17,6 +18,9 @@ target_sources(${NAME}
             ./core/Shader.hpp
             ./core/Texture.hpp
             ./core/Viewport.hpp
+            ./voxels/IVoxelStorage.hpp
+            ./voxels/Voxel.hpp
+            ./voxels/VoxelGrid.hpp
 )
 
 target_compile_features(${NAME} PRIVATE cxx_std_23)
