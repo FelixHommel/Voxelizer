@@ -124,6 +124,10 @@ Application::~Application()
 
 void Application::run()
 {
+    // NOTE: Core profile needs a VAO bound before every draw call (even if it is just empty)
+    unsigned int vao{};
+    glGenVertexArrays(1, &vao);
+
     auto shader{ std::make_unique<Shader>(
         readFile(VOX_ROOT "resources/shaders/voxelDDA_simple.vert").c_str(),
         readFile(VOX_ROOT "resources/shaders/voxelDDA_simple.frag").c_str()
@@ -162,12 +166,15 @@ void Application::run()
         shader->setVector3f("cameraPos", m_camera.position());
         shader->setVector2f("resolution", static_cast<float>(m_windowWidth), static_cast<float>(m_windowHeight));
 
+        glBindVertexArray(vao);
         // NOLINTNEXTLINE(readability-magic-numbers): 3 vertices for one simple triangle
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glfwSwapBuffers(m_window.get());
         glfwPollEvents();
     }
+
+    glDeleteVertexArrays(1, &vao);
 }
 
 void Application::processInput(GLFWwindow* window, float deltaTime)
