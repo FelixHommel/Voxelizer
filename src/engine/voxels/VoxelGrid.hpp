@@ -46,7 +46,8 @@ public:
     VoxelGrid(VoxelGrid&&) noexcept = delete;
     VoxelGrid& operator=(VoxelGrid&&) noexcept = delete;
 
-    [[nodiscard]] static constexpr glm::vec3 gridDimensions() noexcept { return { GRID_DIM, GRID_DIM, GRID_DIM }; }
+    [[nodiscard]] static constexpr glm::vec3 gridDimensionsMin() noexcept { return { 0, 0, 0 }; }
+    [[nodiscard]] static constexpr glm::vec3 gridDimensionsMax() noexcept { return { GRID_DIM, GRID_DIM, GRID_DIM }; }
 
     void uploadToGPU() override
     {

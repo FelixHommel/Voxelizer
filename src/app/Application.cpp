@@ -164,6 +164,8 @@ void Application::run()
 
         shader->setMatrix4("invViewProj", invViewProj);
         shader->setVector3f("cameraPos", m_camera.position());
+        shader->setVector3f("gridMin", VoxelGrid::gridDimensionsMin());
+        shader->setVector3f("gridMax", VoxelGrid::gridDimensionsMax());
         shader->setVector2f("resolution", static_cast<float>(m_windowWidth), static_cast<float>(m_windowHeight));
 
         glBindVertexArray(vao);
