@@ -18,6 +18,7 @@ struct Ray
 {
     vec3 origin;
     vec3 direction;
+    vec3 invDirection;
 };
 
 /// \brief Reverse engineer a viewing ray based on the inverse view projection matrix.
@@ -35,21 +36,21 @@ Ray reconstructRay()
 
     Ray r;
     // NOTE: Not sure which of the two origin options is the correct one
-    r.origin = nearPoint.xyz;
-    // r.origin = cameraPos;
+    // r.origin = nearPoint.xyz;
+    r.origin = cameraPos;
     r.direction = normalize(farPoint.xyz - nearPoint.xyz);
+    r.invDirection = 1 / r.direction;
 
     return r;
 }
 
+// NOTE: Reference
 // https://en.wikipedia.org/wiki/Slab_method
 // https://www.scratchapixel.com/lessons/3d-basic-rendering/minimal-ray-tracer-rendering-simple-shapes/ray-box-intersection.html
 bool intersectAABB(Ray ray, out float tEnter, out float tExit)
 {
-    vec3 invDir = 1.0 / ray.direction;
-
-    vec3 t0 = (gridMin - ray.origin) * invDir;
-    vec3 t1 = (gridMax - ray.origin) * invDir;
+    vec3 t0 = (gridMin - ray.origin) * ray.invDirection;
+    vec3 t1 = (gridMax - ray.origin) * ray.invDirection;
 
     vec3 tmin = min(t0, t1);
     vec3 tmax = max(t0, t1);
@@ -69,14 +70,69 @@ void main()
 
     if(!intersectAABB(ray, tEnter, tExit))
     {
-        // NOTE: Alternatively, just discard the fragment
-        FragColor = vec4(0.0, 0.0, 0.0, 1.0);
-        return;
+        // FragColor = vec4(0.0, 0.0, 0.0, 1.0);
+        // return;
+        discard;
     }
 
     float tStart = max(tEnter, 0.0);
     vec3 entryPos = ray.origin + tStart * ray.direction;
+    entryPos = clamp(entryPos, gridMin, gridMax); // NOTE: Ensure that entryPos is within grid bounds (avoid floating-point errors)
 
-    // FragColor = vec4(1.0, 0.0, 0.0, 1.0);
-    FragColor = vec4(entryPos / gridMax, 1.0);
+    // NOTE: Convert the position to a voxel grid position and look up color of the voxel
+    ivec3 voxel = ivec3(floor(entryPos));
+    vec3 uv = (vec3(voxel) + 0.5) / gridMax;
+    vec4 voxelColor = texture(voxelGrid, uv);
+
+    // NOTE: Determine the next voxel by getting the sign of the components (+1 means step forward in this direction, -1 means step beackwards in this direction)
+    ivec3 voxelStep = ivec3(sign(ray.direction));
+
+    vec3 voxelBoundary = vec3(voxel) + voxelStep * 0.5 + 0.5; // NOTE: Determine the next voxel boundary plane
+    vec3 tMax = (voxelBoundary - entryPos) * ray.invDirection; // NOTE: How far along the ray do we cross into the next voxel boundary
+    vec3 tDelta = abs(ray.invDirection); // NOTE: How far do we move in t to cross one voxel in each axis
+
+    for(int i = 0; i < gridMax.x; ++i)
+    {
+        // NOTE: Sample voxel
+        vec3 uv = (vec3(voxel) + 0.5) / gridMax;
+        vec4 voxelColor = texture(voxelGrid, uv);
+        
+        if(voxelColor.r > 0.0)
+        {
+            FragColor = voxelColor;
+            return;
+        }
+
+        if(tMax.x < tMax.y)
+        {
+            if(tMax.x < tMax.z)
+            {
+                voxel.x += voxelStep.x;
+                tMax.x += tDelta.x;
+            }
+            else
+            {
+                voxel.z += voxelStep.z;
+                tMax.z += tDelta.z;
+            }
+        }
+        else
+        {
+            if(tMax.y < tMax.z)
+            {
+                voxel.y += voxelStep.y;
+                tMax.y += tDelta.y;
+            }
+            else
+            {
+                voxel.z += voxelStep.z;
+                tMax.z += tDelta.z;
+            }
+        }
+    }
+
+    if(any(lessThan(voxel, ivec3(gridMin))) || any(greaterThanEqual(voxel, ivec3(gridMax))))
+    {
+        discard;
+    }
 }
