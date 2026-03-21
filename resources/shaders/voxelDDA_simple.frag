@@ -37,8 +37,9 @@ Ray reconstructRay()
     Ray r;
     // NOTE: Not sure which of the two origin options is the correct one
     // r.origin = nearPoint.xyz;
+    // r.direction = normalize(farPoint.xyz - nearPoint.xyz);
     r.origin = cameraPos;
-    r.direction = normalize(farPoint.xyz - nearPoint.xyz);
+    r.direction = normalize(farPoint.xyz - cameraPos);
     r.invDirection = 1 / r.direction;
 
     return r;
@@ -87,22 +88,24 @@ void main()
     // NOTE: Determine the next voxel by getting the sign of the components (+1 means step forward in this direction, -1 means step beackwards in this direction)
     ivec3 voxelStep = ivec3(sign(ray.direction));
 
-    vec3 voxelBoundary = vec3(voxel) + voxelStep * 0.5 + 0.5; // NOTE: Determine the next voxel boundary plane
+    vec3 voxelBoundary = vec3(voxel) + step(voxelStep, ivec3(0)); // NOTE: Determine the next voxel boundary plane
     vec3 tMax = (voxelBoundary - entryPos) * ray.invDirection; // NOTE: How far along the ray do we cross into the next voxel boundary
     vec3 tDelta = abs(ray.invDirection); // NOTE: How far do we move in t to cross one voxel in each axis
 
-    for(int i = 0; i < gridMax.x; ++i)
+    for(int i = 0; i < 256; ++i)
     {
         // NOTE: Sample voxel
         vec3 uv = (vec3(voxel) + 0.5) / gridMax;
         vec4 voxelColor = texture(voxelGrid, uv);
         
+        // NOTE: If voxel has a color attached to it (assuming a color value of 0.0 means no color) then use it as fragment color and end ray traversal
         if(voxelColor.r > 0.0)
         {
             FragColor = voxelColor;
             return;
         }
 
+        // NOTE: Determine the closest edge
         if(tMax.x < tMax.y)
         {
             if(tMax.x < tMax.z)
@@ -129,10 +132,11 @@ void main()
                 tMax.z += tDelta.z;
             }
         }
-    }
 
-    if(any(lessThan(voxel, ivec3(gridMin))) || any(greaterThanEqual(voxel, ivec3(gridMax))))
-    {
-        discard;
+        if(any(lessThan(voxel, ivec3(gridMin))) || any(greaterThanEqual(voxel, ivec3(gridMax))))
+        {
+            // NOTE: Alternatively just break => would cause black color for all "empty" voxels
+            discard;
+        }
     }
 }
