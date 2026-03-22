@@ -36,6 +36,8 @@ public:
             return false;
         }
 
+        m_initialized = true;
+
         // NOTE: Configure GLFW to create a Headless OpenGL 3.3 Context
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, GL_CONTEXT_MAJ);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, GL_CONTEXT_MIN);
@@ -90,12 +92,10 @@ public:
     void teardown()
     {
         if(!m_initialized)
-            return;
+            glfwTerminate();
 
         if(m_window != nullptr)
             glfwDestroyWindow(m_window);
-
-        glfwTerminate();
 
         m_window = nullptr;
         m_initialized = false;
