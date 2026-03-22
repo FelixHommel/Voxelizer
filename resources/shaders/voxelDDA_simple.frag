@@ -1,5 +1,7 @@
 #version 330 core
 
+#define EPSILON 1e-6
+
 out vec4 FragColor;
 
 uniform mat4 invViewProj;
@@ -40,7 +42,7 @@ Ray reconstructRay()
     // r.direction = normalize(farPoint.xyz - nearPoint.xyz);
     r.origin = cameraPos;
     r.direction = normalize(farPoint.xyz - cameraPos);
-    r.invDirection = 1 / r.direction;
+    r.invDirection = 1 / (r.direction + EPSILON); // NOTE: Add epsilon to avoid 0 divison with a perfectly alignde ray
 
     return r;
 }
