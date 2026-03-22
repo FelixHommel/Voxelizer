@@ -64,7 +64,7 @@ public:
 private:
     static constexpr std::size_t GRID_DIM{ 64 };
     static constexpr std::size_t GRID_DIM_CUBED{ GRID_DIM * GRID_DIM * GRID_DIM };
-    static constexpr std::uint8_t BLACK_VOXEL{ 255 };
+    static constexpr std::uint8_t WHITE_VOXEL{ 255 };
 
     std::vector<Voxel> m_voxelGrid;
     std::uint32_t m_texture{ 0 };
@@ -88,10 +88,10 @@ private:
             {
                 auto& v{ voxelAt(i, 0, j) };
 
-                v.colorR = BLACK_VOXEL;
-                v.colorG = BLACK_VOXEL;
-                v.colorB = BLACK_VOXEL;
-                v.colorA = BLACK_VOXEL;
+                v.colorR = WHITE_VOXEL;
+                v.colorG = WHITE_VOXEL;
+                v.colorB = WHITE_VOXEL;
+                v.colorA = WHITE_VOXEL;
             }
         }
     }
