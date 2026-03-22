@@ -88,7 +88,7 @@ void main()
     // NOTE: Determine the next voxel by getting the sign of the components (+1 means step forward in this direction, -1 means step beackwards in this direction)
     ivec3 voxelStep = ivec3(sign(ray.direction));
 
-    vec3 voxelBoundary = vec3(voxel) + step(voxelStep, ivec3(0)); // NOTE: Determine the next voxel boundary plane
+    vec3 voxelBoundary = vec3(voxel) + step(vec3(0), vec3(voxelStep)); // NOTE: Determine the next voxel boundary plane
     vec3 tMax = (voxelBoundary - entryPos) * ray.invDirection; // NOTE: How far along the ray do we cross into the next voxel boundary
     vec3 tDelta = abs(ray.invDirection); // NOTE: How far do we move in t to cross one voxel in each axis
 
