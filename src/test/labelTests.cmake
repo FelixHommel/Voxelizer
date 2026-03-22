@@ -1,7 +1,6 @@
 # NOTE: Tests that require OpenGL to complete need to be labeled with the 'OpenGL' label because they can't be run for Windows CI jobs
 
 set_tests_properties(
-    PROPERTIES LABELS OpenGL
     ShaderTest.SetFourSingleFloatValuesWithUse
     ShaderTest.SetFloatVector4ValueWithUse
     ShaderTest.SetFloatVector3ValueWithUse
@@ -20,4 +19,5 @@ set_tests_properties(
     TextureTest.TextureMoveConstructor
     TextureTest.TextureMoveAssignment
     TextureTest.TextureBindActivatesTheTexture
+    PROPERTIES LABELS OpenGL
 )
