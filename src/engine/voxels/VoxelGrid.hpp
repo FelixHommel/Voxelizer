@@ -81,10 +81,10 @@ private:
 
     void populateVoxels()
     {
-        // NOTE: Make the bottom layer of the voxel grid black, to verify presence (Implication: color = 0 => no voxel present).
-        for(auto i{ 0 }; i < GRID_DIM; ++i)
+        // NOTE: Make the bottom layer of the voxel grid white, to verify presence (Implication: color = 0 => no voxel present).
+        for(std::size_t i{ 0 }; i < GRID_DIM; ++i)
         {
-            for(auto j{ 0 }; j < GRID_DIM; ++j)
+            for(std::size_t j{ 0 }; j < GRID_DIM; ++j)
             {
                 auto& v{ voxelAt(i, 0, j) };
 
