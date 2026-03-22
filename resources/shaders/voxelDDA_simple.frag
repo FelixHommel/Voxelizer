@@ -80,10 +80,8 @@ void main()
     vec3 entryPos = ray.origin + tStart * ray.direction;
     entryPos = clamp(entryPos, gridMin, gridMax); // NOTE: Ensure that entryPos is within grid bounds (avoid floating-point errors)
 
-    // NOTE: Convert the position to a voxel grid position and look up color of the voxel
+    // NOTE: Convert the entry position to a voxel grid position 
     ivec3 voxel = ivec3(floor(entryPos));
-    vec3 uv = (vec3(voxel) + 0.5) / gridMax;
-    vec4 voxelColor = texture(voxelGrid, uv);
 
     // NOTE: Determine the next voxel by getting the sign of the components (+1 means step forward in this direction, -1 means step beackwards in this direction)
     ivec3 voxelStep = ivec3(sign(ray.direction));
