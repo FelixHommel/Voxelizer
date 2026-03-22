@@ -137,4 +137,7 @@ void main()
             discard;
         }
     }
+
+    // NOTE: If ray exhausted all loop iterations without hitting a voxel then discard the fragment.
+    discard;
 }
