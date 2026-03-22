@@ -101,7 +101,8 @@ std::vector<T> generateRandomVector(
     std::uint32_t seed = DEFAULT_RNG_SEED
 )
 {
-    std::vector<T> vec(n);
+    std::vector<T> vec;
+    vec.reserve(n);
 
     for(std::size_t i{ 0 }; i < n; ++i)
         vec.push_back(generateRandomValue<T>(min, max, exclusions, seed));
