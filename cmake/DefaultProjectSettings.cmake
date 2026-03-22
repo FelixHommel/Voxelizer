@@ -27,6 +27,6 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(VOX_ENABLE_ASSERTIONS ON CACHE BOOL "" FORCE)
 endif()
 
-add_compile_definitions(VOX_DEBUG=$<BOOL:${SFA_DEBUG}>)
-add_compile_definitions(VOX_ENABLE_ASSERTIONS=$<BOOL:${SFA_ENABLE_ASSERTIONS}>)
+add_compile_definitions(VOX_DEBUG=$<BOOL:${VOX_DEBUG}>)
+add_compile_definitions(VOX_ENABLE_ASSERTIONS=$<BOOL:${VOX_ENABLE_ASSERTIONS}>)
 
