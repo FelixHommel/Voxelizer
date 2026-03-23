@@ -19,6 +19,8 @@ constexpr auto DEFAULT_SPEED{ 2.5f };
 constexpr auto DEFAULT_SENSITIVITY{ 0.1f };
 constexpr auto DEFAULT_ZOOM{ 45.f };
 
+constexpr auto YAW_OFFSET{ 200.f };
+constexpr auto PITCH_OFFSET{ 200.f };
 constexpr auto PITCH_CONSTRAIN{ 89.f };
 
 constexpr auto ZOOM_MIN{ 1.f };
@@ -39,7 +41,11 @@ public:
         LEFT,
         RIGHT,
         UP,
-        DOWN
+        DOWN,
+        YAW_LEFT,
+        YAW_RIGHT,
+        PITCH_UP,
+        PITCH_DOWN
     };
 
     explicit Camera(

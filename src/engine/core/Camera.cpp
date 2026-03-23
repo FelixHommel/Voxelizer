@@ -14,7 +14,7 @@ Camera::Camera(const glm::vec3& position, const glm::vec3& up, float yaw, float 
 
 void Camera::processKeyboard(CameraMovement direction, float dt)
 {
-    float velocity{ m_movementSpeed * dt };
+    const float velocity{ m_movementSpeed * dt };
 
     if(direction == CameraMovement::FORWARD)
         m_position += m_front * velocity;
@@ -30,6 +30,26 @@ void Camera::processKeyboard(CameraMovement direction, float dt)
         m_position += m_up * velocity;
     else if(direction == CameraMovement::DOWN)
         m_position -= m_up * velocity;
+
+    const float turnSpeed{ m_mouseSensitivity * dt };
+
+    if(direction == CameraMovement::YAW_RIGHT)
+        m_yaw += ::YAW_OFFSET * turnSpeed;
+    else if(direction == CameraMovement::YAW_LEFT)
+        m_yaw -= ::YAW_OFFSET * turnSpeed;
+
+    if(direction == CameraMovement::PITCH_UP)
+        m_pitch += ::PITCH_OFFSET * turnSpeed;
+    else if(direction == CameraMovement::PITCH_DOWN)
+        m_pitch -= ::PITCH_OFFSET * turnSpeed;
+
+    if(m_pitch > ::PITCH_CONSTRAIN)
+        m_pitch = ::PITCH_CONSTRAIN;
+
+    if(m_pitch < -::PITCH_CONSTRAIN)
+        m_pitch = -::PITCH_CONSTRAIN;
+
+    updateCameraVectors();
 }
 
 void Camera::processMouseMovement(float offsetX, float offsetY, bool constrainPitch)

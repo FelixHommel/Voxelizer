@@ -203,6 +203,16 @@ void Application::processInput(GLFWwindow* window, float deltaTime)
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     if(glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+    if(glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+        m_camera.processKeyboard(Camera::CameraMovement::PITCH_UP, deltaTime);
+    else if(glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+        m_camera.processKeyboard(Camera::CameraMovement::PITCH_DOWN, deltaTime);
+
+    if(glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        m_camera.processKeyboard(Camera::CameraMovement::YAW_RIGHT, deltaTime);
+    else if(glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        m_camera.processKeyboard(Camera::CameraMovement::YAW_LEFT, deltaTime);
 }
 
 constexpr std::string Application::readFile(const std::filesystem::path& filepath)
