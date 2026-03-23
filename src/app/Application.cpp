@@ -130,7 +130,7 @@ void Application::run()
 
     auto shader{ std::make_unique<Shader>(
         readFile(VOX_ROOT "resources/shaders/voxelDDA_simple.vert").c_str(),
-        readFile(VOX_ROOT "resources/shaders/voxelDDA_simple.frag").c_str()
+        readFile(VOX_ROOT "resources/shaders/voxelDDA_normals.frag").c_str()
     ) };
 
     shader->use();
