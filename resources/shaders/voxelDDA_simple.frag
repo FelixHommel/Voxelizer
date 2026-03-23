@@ -37,9 +37,6 @@ Ray reconstructRay()
     farPoint /= farPoint.w;
 
     Ray r;
-    // NOTE: Not sure which of the two origin options is the correct one
-    // r.origin = nearPoint.xyz;
-    // r.direction = normalize(farPoint.xyz - nearPoint.xyz);
     r.origin = cameraPos;
     r.direction = normalize(farPoint.xyz - cameraPos);
     r.invDirection = 1 / (r.direction + EPSILON); // NOTE: Add epsilon to avoid 0 divison with a perfectly alignde ray
