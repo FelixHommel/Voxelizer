@@ -18,6 +18,7 @@ target_sources(${NAME}
             ./core/Shader.hpp
             ./core/Texture.hpp
             ./core/Viewport.hpp
+            ./external/PerlinNoise.hpp
             ./voxels/IVoxelStorage.hpp
             ./voxels/Voxel.hpp
             ./voxels/VoxelGrid.hpp

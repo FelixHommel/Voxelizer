@@ -15,6 +15,7 @@ or very convenient (i.e., [GLFW](https://github.com/glfw/glfw), [GLM](https://gi
 - [GTest](https://github.com/google/googletest)
 - [spdlog](https://github.com/gabime/spdlog)
 - [stb](https://github.com/nothings/stb)
+- [siv PerlinNoise](https://github.com/Reputeless/PerlinNoise)
 
 ## Acknowledgments / Credits
 

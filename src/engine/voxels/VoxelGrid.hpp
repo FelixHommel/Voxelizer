@@ -4,6 +4,7 @@
 #include "./IVoxelStorage.hpp"
 #include "./Voxel.hpp"
 
+#include "external/PerlinNoise.hpp"
 #include <glad/gl.h>
 #include <glm/glm.hpp>
 
@@ -13,33 +14,15 @@
 namespace vox
 {
 
+/// \brief A \ref VoxelGrid is a simple 3D container of voxels where each element corresponds to one voxel.
+///
+/// \author Felix Hommel
+/// \date 3/20/2026
 class VoxelGrid : public IVoxelStorage
 {
 public:
-    VoxelGrid()
-        : m_voxelGrid(GRID_DIM_CUBED)
-    {
-        populateVoxels();
-        glGenTextures(1, &m_texture);
-
-        bind();
-
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-
-        glTexImage3D(GL_TEXTURE_3D, 0, GL_RGBA8, GRID_DIM, GRID_DIM, GRID_DIM, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_voxelGrid.data());
-
-        glBindTexture(GL_TEXTURE_3D, 0);
-    }
-
-    ~VoxelGrid() override
-    {
-        glDeleteTextures(1, &m_texture);
-    }
+    VoxelGrid();
+    ~VoxelGrid() override;
 
     VoxelGrid(const VoxelGrid&) = delete;
     VoxelGrid& operator=(const VoxelGrid&) = delete;
@@ -49,22 +32,18 @@ public:
     [[nodiscard]] static constexpr glm::vec3 gridDimensionsMin() noexcept { return { 0, 0, 0 }; }
     [[nodiscard]] static constexpr glm::vec3 gridDimensionsMax() noexcept { return { GRID_DIM, GRID_DIM, GRID_DIM }; }
 
-    void uploadToGPU() override
-    {
-        // FIXME: Implement this method
-        // NOTE: Not really necessary I think. GPU upload is done in the constructor with glTexImage3D(...)
-    }
-
-    void bind(std::uint32_t slot = 0) override
-    {
-        glActiveTexture(GL_TEXTURE0 + slot);
-        glBindTexture(GL_TEXTURE_3D, m_texture);
-    }
+    void uploadToGPU() override;
+    void bind(std::uint32_t slot = 0) override;
 
 private:
     static constexpr std::size_t GRID_DIM{ 64 };
     static constexpr std::size_t GRID_DIM_CUBED{ GRID_DIM * GRID_DIM * GRID_DIM };
     static constexpr std::uint8_t WHITE_VOXEL{ 255 };
+    static constexpr siv::PerlinNoise::seed_type PERLIN_SEED{ 123456u };
+    static constexpr auto PERLIN_VALUE_FACTOR{ 0.01f };
+    static constexpr std::int32_t PERLIN_OCTAVES{ 4 };
+
+    const siv::PerlinNoise perlin;
 
     std::vector<Voxel> m_voxelGrid;
     std::uint32_t m_texture{ 0 };
@@ -79,22 +58,7 @@ private:
         return m_voxelGrid.at(x + (y * GRID_DIM) + (z * GRID_DIM * GRID_DIM));
     }
 
-    void populateVoxels()
-    {
-        // NOTE: Make the bottom layer of the voxel grid white, to verify presence (Implication: color = 0 => no voxel present).
-        for(std::size_t i{ 0 }; i < GRID_DIM; ++i)
-        {
-            for(std::size_t j{ 0 }; j < GRID_DIM; ++j)
-            {
-                auto& v{ voxelAt(i, 0, j) };
-
-                v.colorR = WHITE_VOXEL;
-                v.colorG = WHITE_VOXEL;
-                v.colorB = WHITE_VOXEL;
-                v.colorA = WHITE_VOXEL;
-            }
-        }
-    }
+    void populateVoxels();
 };
 
 } // namespace vox
