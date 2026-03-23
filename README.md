@@ -1,6 +1,8 @@
 # Voxelizer
 
 ![Build](https://github.com/FelixHommel/Voxeler/actions/workflows/build.yml/badge.svg)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/d688f79815f741f091938fb6b76afe46)](https://app.codacy.com/gh/FelixHommel/Voxelizer/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/d688f79815f741f091938fb6b76afe46)](https://app.codacy.com/gh/FelixHommel/Voxelizer/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_coverage)
 
 This is an attempt to create a Voxel Renderer from scratch using C++ and OpenGL. I will limit the use of external
 dependencies besides some very common (i.e., [spdlog](https://github.com/gabime/spdlog), [fmt](https://github.com/fmtlib/fmt))
