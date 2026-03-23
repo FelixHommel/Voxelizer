@@ -11,9 +11,7 @@
 namespace vox
 {
 
-VoxelGrid::VoxelGrid()
-    : m_voxelGrid(GRID_DIM_CUBED)
-    , perlin{ PERLIN_SEED }
+VoxelGrid::VoxelGrid() : m_voxelGrid(GRID_DIM_CUBED), perlin{ PERLIN_SEED }
 {
     populateVoxels();
     glGenTextures(1, &m_texture);
@@ -64,14 +62,12 @@ void VoxelGrid::populateVoxels()
             {
                 auto& v{ voxelAt(y, x, z) };
 
-                const auto perlinValue{
-                    perlin.octave3D_01(
-                        (static_cast<float>(x) * PERLIN_VALUE_FACTOR),
-                        (static_cast<float>(y) * PERLIN_VALUE_FACTOR),
-                        (static_cast<float>(z) * PERLIN_VALUE_FACTOR),
-                        PERLIN_OCTAVES
-                    )
-                };
+                const auto perlinValue{ perlin.octave3D_01(
+                    (static_cast<float>(x) * PERLIN_VALUE_FACTOR),
+                    (static_cast<float>(y) * PERLIN_VALUE_FACTOR),
+                    (static_cast<float>(z) * PERLIN_VALUE_FACTOR),
+                    PERLIN_OCTAVES
+                ) };
 
                 const auto colorValue{ static_cast<std::uint8_t>(perlinValue * WHITE_VOXEL) };
 
