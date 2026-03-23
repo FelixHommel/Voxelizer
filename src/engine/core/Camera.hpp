@@ -42,7 +42,7 @@ public:
         DOWN
     };
 
-    Camera(
+    explicit Camera(
         const glm::vec3& position = ::DEFAULT_POSITION,
         const glm::vec3& up = ::DEFAULT_UP,
         float yaw = ::DEFAULT_YAW,
